@@ -1,0 +1,76 @@
+name: Android Debug
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The workflow is intentionally tolerant while the repo is a skeleton:
+      # if the Gradle wrapper is not committed yet, remaining steps are skipped
+      # instead of failing the pipeline.
+      - name: Check Gradle wrapper
+        id: guard
+        shell: bash
+        run: |
+          if [ -f gradlew ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::gradlew not found; skipping the Android build steps."
+          fi
+
+      - name: Set up JDK 21
+        if: steps.guard.outputs.ready == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        if: steps.guard.outputs.ready == 'true'
+        shell: bash
+        run: |
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(command -v sdkmanager)"
+          fi
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        if: steps.guard.outputs.ready == 'true'
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        if: steps.guard.outputs.ready == 'true'
+        run: ./gradlew :core:playlist:test --stacktrace
+
+      - name: Assemble debug APK
+        if: steps.guard.outputs.ready == 'true'
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        if: steps.guard.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeltatv-android-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+          retention-days: 14
