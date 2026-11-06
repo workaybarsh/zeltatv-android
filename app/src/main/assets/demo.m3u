@@ -1,0 +1,9 @@
+#EXTM3U
+# Skeleton demo playlist. Public test streams only.
+# Replace with a real playlist import (URL or local file) in the data layer.
+#EXTINF:-1 tvg-id="demo.mux" tvg-logo="" group-title="Demo",Mux Test Stream (HLS)
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="demo.apple" tvg-logo="" group-title="Demo",Apple BipBop (fMP4 HLS)
+https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8
+#EXTINF:-1 tvg-id="demo.bbb" tvg-logo="" group-title="Demo",Big Buck Bunny (HLS)
+https://test-streams.mux.dev/pts_shift/master.m3u8

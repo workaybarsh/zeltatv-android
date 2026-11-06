@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  IPTV providers commonly serve plain HTTP manifests/segments and self-signed
+  endpoints. Cleartext stays enabled for parity with the desktop app, but the
+  release hardening task is to make this per-source and opt-in.
+
+  Documented in docs/architecture.md ("Network layer and CORS").
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

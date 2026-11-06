@@ -1,0 +1,51 @@
+# Android / Gradle
+*.iml
+.gradle/
+.kotlin/
+/build/
+**/build/
+/captures/
+local.properties
+.externalNativeBuild/
+.cxx/
+output-metadata.json
+*.hprof
+
+# IDE
+.idea/
+*.ipr
+*.iws
+.vscode/
+
+# Signing material must never be committed
+*.jks
+*.keystore
+*.p12
+keystore.properties
+signing.properties
+secrets.properties
+google-services.json
+
+# Build outputs
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Kotlin / Gradle wrapper helper
+!gradle/wrapper/gradle-wrapper.jar
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Env / local tooling
+.env
+.env.*
+!.env.example
+
+# Test artifacts
+artifacts/
+*.log
